@@ -20,7 +20,7 @@ const Server = async (): Promise<{ app: Express; server: http.Server }> => {
       response.json({
         status: true,
         content: {
-          data: 'Welcome to API',
+          data: 'Welcome to scan & pay API',
         }
       })
     );
