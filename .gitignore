@@ -5,4 +5,4 @@ node_modules
 .src/config/.env
 
 #dist folder
-./dist
+dist
