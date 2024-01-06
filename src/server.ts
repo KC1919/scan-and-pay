@@ -1,17 +1,41 @@
+import dotenv from 'dotenv';
 import http from 'http';
-import express from 'express';
+import express, { Express } from 'express';
 import connectDB from './config/db';
 
-const app = express();
+const Server = async (): Promise<{ app: Express; server: http.Server }> => {
+    const app = express();
+  
+    const server = http.createServer(app);
+    // Loaders
+    await connectDB();
 
-// only create the server not start it
-// useful for tests
-// const Server = async (): Promise<{ app: Express; }> => {
-//     const app = express();
-//     return { app };
-// };
-
-connectDB();
-const Server = http.createServer(app);
-
+  
+    // API Routes
+  
+    // app.use(RefreshTokenMiddleware);
+    // app.use('/v1/other', OtherRouter);
+  
+    app.get('/', (request: express.Request, response: express.Response) =>
+      response.json({
+        status: true,
+        content: {
+          data: 'Welcome to API',
+        }
+      })
+    );
+  
+    app.all('*', async () => {
+    //   throw new NotFoundError();
+    });
+  
+    // Middlewares
+    // app.use(ErrorHandler);
+  
+    return { app, server };
+  };
 export default Server;
+
+// const Server = http.createServer(app);
+
+// export default Server;

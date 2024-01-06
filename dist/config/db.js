@@ -6,7 +6,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const mongoose_1 = __importDefault(require("mongoose"));
 const connectDB = async () => {
     try {
-        console.log(process.env.DB_URL);
         if (process.env.DB_URL && process.env.DB_PASS) {
             const conn = await mongoose_1.default.connect(process.env.DB_URL.replace('<password>', process.env.DB_PASS));
             if (conn !== null) {

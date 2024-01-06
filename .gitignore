@@ -2,7 +2,7 @@
 node_modules
 
 # configuration files
-./config/.env
+.src/config/.env
 
 #dist folder
 ./dist

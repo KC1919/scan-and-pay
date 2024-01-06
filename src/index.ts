@@ -1,14 +1,12 @@
 import dotenv from 'dotenv';
-dotenv.config({ path: '/config/.env' });
+dotenv.config({ path: './src/config/.env' });
 import Server from './server';
-import express from 'express';
-
 
 const PORT = process.env.PORT || 3000;
 
-const app = Server;
 
 (async () => {
+    const { app } = await Server();
     try {
         app.listen(PORT, async () => {
             console.log(`Server listening on port:${PORT}`);

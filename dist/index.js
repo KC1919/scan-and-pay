@@ -4,11 +4,11 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const dotenv_1 = __importDefault(require("dotenv"));
-dotenv_1.default.config({ path: '/config/.env' });
+dotenv_1.default.config({ path: './src/config/.env' });
 const server_1 = __importDefault(require("./server"));
 const PORT = process.env.PORT || 3000;
-const app = server_1.default;
 (async () => {
+    const { app } = await (0, server_1.default)();
     try {
         app.listen(PORT, async () => {
             console.log(`Server listening on port:${PORT}`);
