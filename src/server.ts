@@ -1,5 +1,6 @@
 import http from 'http';
 import express from 'express';
+import connectDB from './config/db';
 
 const app = express();
 
@@ -10,6 +11,7 @@ const app = express();
 //     return { app };
 // };
 
+connectDB();
 const Server = http.createServer(app);
 
 export default Server;

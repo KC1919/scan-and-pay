@@ -1,23 +1,23 @@
-import dotenv from 'dotenv';
-dotenv.config({ path: '/config/.env' });
-import Server from './server';
-import express from 'express';
-
-
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const dotenv_1 = __importDefault(require("dotenv"));
+dotenv_1.default.config({ path: '/config/.env' });
+const server_1 = __importDefault(require("./server"));
 const PORT = process.env.PORT || 3000;
-
-const app = Server;
-
+const app = server_1.default;
 (async () => {
     try {
         app.listen(PORT, async () => {
             console.log(`Server listening on port:${PORT}`);
         });
-    } catch (error) {
+    }
+    catch (error) {
         console.log('Failed to start server', error);
     }
 })();
-
 // // IIFE
 // (async () => {
 //     // starting the server
