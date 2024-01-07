@@ -6,7 +6,7 @@ class TableController {
         response: express.Response
     ) => {
         const { table_number } = request.body;
-        const result = TableService.create(table_number);
+        const result = await TableService.create(table_number);
         return response.json({
             status: true,
             content: {
@@ -19,7 +19,7 @@ class TableController {
         request: express.Request,
         response: express.Response
     ) => {
-        const result = TableService.getAll();
+        const result = await TableService.getAll();
         return response.json({
             status: true,
             content: {
