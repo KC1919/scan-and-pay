@@ -9,10 +9,6 @@ const tableSchema = new mongoose.Schema({
     otp: {
         type: String,
     },
-    order_id: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Order',
-    },
 });
 
 const Table = mongoose.model('Table', tableSchema);
