@@ -1,4 +1,3 @@
-import dotenv from 'dotenv';
 import http from 'http';
 import express, { Express } from 'express';
 import connectDB from './config/db';

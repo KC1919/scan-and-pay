@@ -5,6 +5,7 @@ node_modules
 ./src/config/.env
 /src/config/.env
 src/config/.env
+.env
 
 #dist folder
 ./dist

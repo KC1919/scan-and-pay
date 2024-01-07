@@ -5,30 +5,17 @@ import Server from './server';
 const PORT = process.env.PORT || 3000;
 
 
+// eslint-disable-next-line @typescript-eslint/no-floating-promises
 (async () => {
-    const { app } = await Server();
-    try {
-        app.listen(PORT, async () => {
-            console.log(`Server listening on port:${PORT}`);
+    Server()
+      .then(({ app }) => {
+        app.listen(PORT, () => {
+          console.log(`🚀 Listening http on port ${PORT}`);
         });
-    } catch (error) {
-        console.log('Failed to start server', error);
-    }
-})();
-
-// // IIFE
-// (async () => {
-//     // starting the server
-//     // deconstrcuting app from promise's result
-//     Server()
-//     .then(({app}) => {
-//         const PORT = 3003;
-//         app.listen(PORT, () => {
-//             console.log(`🚀 Listening http on port ${PORT}`);
-//         });
-//     })
-//     .catch((error) => {
-//         console.log('Error in running server', error);
-//         process.exit(1);
-//     })
-// })();
+      })
+      .catch((e) => {
+        console.log(e);
+        // eslint-disable-next-line no-process-exit
+        process.exit(1);
+      });
+  })();
