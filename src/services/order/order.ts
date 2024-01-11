@@ -1,13 +1,31 @@
 import Database from "../../loaders/database"
-import { tableCreatePrisma } from "../../types/admin/tableType";
+import { IitemCreatePrisma, IitemPrisma } from "../../types/order/orderType";
+import { ProductService } from "../product/product";
 
-export class TableService {
-    static async create(table_number: number) {
+export class OrderService {
+
+    // table number & item_lists (product_id(string) & qty (int))
+    static async create(table_number: number, item_list: IitemPrisma[]) {
         try {
-            const document: tableCreatePrisma = {
-                table_number
-            }
-            const result = await Database.instance.table.create({
+            const document: IitemCreatePrisma[] = [];
+
+            item_list.forEach(async (item) => {
+
+                // check if product exits by product_id
+                if (!(await ProductService.getProductById(item.productId))) {
+                    throw new Error('ResourceNotFound: product')
+                }
+
+                // document.push(item);
+                // check if product exists
+                const item_created = await Database.instance.item.create({
+                    data: item
+                });
+
+                document.push(item_created)
+            });
+
+            const result = await Database.instance.order.create({
                 data: document
             });
             return result;

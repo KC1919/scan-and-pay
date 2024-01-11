@@ -6,7 +6,7 @@ import cookieparser from 'cookie-parser';
 
 const RateLimitedMiddleware = rateLimit({
     windowMs: ms('1min'), // 1 minute
-    max: 180, // Limit each IP to 120 requests per `window` (here, per minute)
+    max: 180, // Limit each IP to 180 requests per `window` (here, per minute)
     standardHeaders: true, // Return rate limit info in the `RateLimit-*` headers
     legacyHeaders: false, // Disable the `X-RateLimit-*` headers
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
