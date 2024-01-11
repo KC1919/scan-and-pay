@@ -7,8 +7,8 @@ class UserController {
         response: express.Response,
         next: express.NextFunction
     ) => {
-        const { name, phone } = request.body;
-        const result = await UserService.create(name, phone);
+        const { name, phone, table_number } = request.body;
+        const result = await UserService.create(name, phone, table_number);
         console.log('User created successfully!');
         return response.status(200).json({
             status: true,
