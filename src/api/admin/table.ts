@@ -8,6 +8,4 @@ TableRouter.post('/create', verifyUser, TableController.create);
 
 TableRouter.get('/all', verifyUser, TableController.getAll);
 
-TableRouter.patch('/update', verifyUser, TableController.updateOtp);
-
 export default TableRouter;

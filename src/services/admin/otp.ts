@@ -24,7 +24,14 @@ export class OtpService {
     }
 
     static async generateOtp() {
-        const otp = await generateOTP();
-        return otp;
+        try {
+            const otp = await generateOTP();
+            return otp;
+        } catch (error) {
+            console.log(
+                'Failed to generate otp, internal server error!',
+                error
+            );
+        }
     }
 }
