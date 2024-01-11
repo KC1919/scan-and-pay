@@ -72,4 +72,5 @@ model Table {
   table_number Int    @unique
   otp          Int
   order        Order?
+  qrcode       String
 }

@@ -1,11 +1,13 @@
 import Database from '../../loaders/database';
 import { tableCreatePrisma } from '../../types/admin/table';
+import QRCode from 'qrcode';
 
 export class TableService {
-    static async create(table_number: number) {
+    static async create(table_number: number, qrcode: string) {
         try {
             const document: tableCreatePrisma = {
                 table_number,
+                qrcode
             };
             const result = await Database.instance.table.create({
                 data: document,
@@ -32,6 +34,16 @@ export class TableService {
             const result = 'write query here'; // write otp update query for a table=table_number
         } catch (error) {
             console.log('failed to update otp:', error);
+        }
+    }
+
+    static async generateQRCode(table_number:number) {
+        try {
+            const QR_Code=await QRCode.toDataURL(String(table_number));
+            console.log(QR_Code);
+            
+        } catch (error) {
+            console.log('Failed to generate QR_CODE:', error);
         }
     }
 }
