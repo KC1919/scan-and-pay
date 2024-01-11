@@ -70,7 +70,7 @@ model Admin {
 model Table {
   id           String @id @default(auto()) @map("_id") @db.ObjectId
   table_number Int    @unique
-  otp          Int
+  otp          Int?
   order        Order?
   qrcode       String
 }
