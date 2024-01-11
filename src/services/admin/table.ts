@@ -27,19 +27,8 @@ export class TableService {
         }
     }
 
-    static async update(data: { otp?: number; table_number?: number }) {
+    static async updateOtp(otp: number, table_number: number) {
         try {
-            let update_key: string;
-            let update_value: string | number;
-
-            if (data['otp']) {
-                update_key = 'otp';
-                update_value = data['otp'];
-            } else if (data['table_number']) {
-                update_key = 'table_number';
-                update_value = data['table_number'];
-            }
-
             const result = 'write query here'; // write otp update query for a table=table_number
         } catch (error) {
             console.log('failed to update otp:', error);

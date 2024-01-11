@@ -28,12 +28,12 @@ class TableController {
         });
     };
 
-    static update = async (
+    static updateOtp = async (
         request: express.Request,
         response: express.Response
     ) => {
-        const data = request.body;
-        const result = await TableService.update(data);
+        const {otp, table_number} = request.body;
+        const result = await TableService.updateOtp(otp, table_number);
         return response.status(200).json({
             status: true,
             content: {

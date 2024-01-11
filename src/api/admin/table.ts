@@ -1,12 +1,13 @@
 import express from 'express';
 import TableController from '../../controllers/admin/table';
+import verifyUser from '../../middlewares/verifyUser';
 
 const TableRouter = express.Router();
 
-TableRouter.post('/create', TableController.create);
+TableRouter.post('/create', verifyUser, TableController.create);
 
-TableRouter.get('/all', TableController.getAll);
+TableRouter.get('/all', verifyUser, TableController.getAll);
 
-TableRouter.patch('/update', TableController.update);
+TableRouter.patch('/update', verifyUser, TableController.updateOtp);
 
 export default TableRouter;

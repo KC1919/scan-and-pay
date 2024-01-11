@@ -3,9 +3,12 @@ import express, { Express } from 'express';
 import Database from './loaders/database';
 import { FrameworkLoader } from './loaders/framework';
 import TableRouter from './api/admin/table';
+import cookieParser from 'cookie-parser';
 
 const Server = async (): Promise<{ app: Express; server: http.Server }> => {
   const app = express();
+
+  app.use(cookieParser());
 
   const server = http.createServer(app);
 
