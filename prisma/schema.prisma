@@ -68,8 +68,8 @@ model Admin {
 }
 
 model Table {
-  id           String  @id @default(auto()) @map("_id") @db.ObjectId
-  table_number Int     @unique
-  otp          String?
+  id           String @id @default(auto()) @map("_id") @db.ObjectId
+  table_number Int    @unique
+  otp          Int
   order        Order?
 }

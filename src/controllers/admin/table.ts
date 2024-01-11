@@ -10,10 +10,10 @@ class TableController {
         return response.json({
             status: true,
             content: {
-                data: result
-            }
+                data: result,
+            },
         });
-    }
+    };
 
     static getAll = async (
         request: express.Request,
@@ -23,10 +23,24 @@ class TableController {
         return response.json({
             status: true,
             content: {
-                data: result
-            }
+                data: result,
+            },
         });
-    }
+    };
+
+    static update = async (
+        request: express.Request,
+        response: express.Response
+    ) => {
+        const data = request.body;
+        const result = await TableService.update(data);
+        return response.status(200).json({
+            status: true,
+            content: {
+                data: result,
+            },
+        });
+    };
 }
 
 export default TableController;
