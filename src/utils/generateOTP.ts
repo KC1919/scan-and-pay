@@ -1,15 +1,15 @@
 import otpGenerator from 'otp-generator';
 
-const generateOtp = async () =>  {
+const generateOtp = async () => {
     try {
-        const otp = otpGenerator.generate(5, {
-            upperCaseAlphabets: false,
-            specialChars: false,
-            lowerCaseAlphabets: false
-        });
-        
+        const otp: number = Number(
+            otpGenerator.generate(5, {
+                upperCaseAlphabets: false,
+                specialChars: false,
+                lowerCaseAlphabets: false,
+            })
+        );
         return otp;
-
     } catch (error) {
         console.log('error generating otp', error);
     }
@@ -17,4 +17,4 @@ const generateOtp = async () =>  {
 
 // generateOtp();
 
-module.exports = generateOtp;
+export default generateOtp;
