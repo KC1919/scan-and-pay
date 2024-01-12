@@ -5,8 +5,8 @@ class TableController {
         request: express.Request,
         response: express.Response
     ) => {
-        const { table_number } = request.body;
-        const result = await TableService.create(table_number);
+        const { table_number, qr_code } = request.body;
+        const result = await TableService.create(table_number, qr_code);
         return response.json({
             status: true,
             content: {

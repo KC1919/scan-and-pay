@@ -19,11 +19,41 @@ export class TableService {
         }
     }
 
-    static async getAll() {
+    // to get all tables for ADMIN FE
+    // Table number:1,  OTP,  PAYMENT? 
+    static async getAll(
+        page?: number,
+        limit?: number,
+        options?: IPrismaOptions
+    ) {
         try {
-            const result = await Database.instance.table.findFirst({
+            const db = options?.transaction || Database.instance;
+
+            const totalTables = await db.table.count({});
+            const currentPage = page ?? 1;
+            const itemsPerPage = limit ?? 10;
+            const pages = Math.ceil(totalTables / itemsPerPage);
+
+            const result = await Database.instance.table.findMany({
+                select: {
+                    table_number: true,
+                    otp: true
+                },
+                take: itemsPerPage,
+                skip: (currentPage - 1) * itemsPerPage,
             });
-            return result;
+
+            const filter_count = result ? result.length : 0;
+
+            // change filter
+            return {
+                meta: {
+                    total_count: totalTables,
+                    filter_count: filter_count,
+                    pages: pages
+                },
+                result
+            };
         } catch (error) {
             console.log('error in getting all tables:', error);
             throw new Error('SomethingWentWrong');

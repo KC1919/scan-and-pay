@@ -9,5 +9,5 @@ export type IPrismaTransaction =
         '$connect' | '$disconnect' | '$on' | '$transaction' | '$use' | '$extends'
     >;
 export interface IPrismaOptions {
-    transaction?: typeof Database.instance;
+    transaction?: IPrismaTransaction;
 }

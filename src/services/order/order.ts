@@ -19,12 +19,9 @@ export class OrderService {
                 if (!(await ProductService.getProductById(item.productId))) {
                     throw new Error('ResourceNotFound: product')
                 }
-                // await Database.instance.item.create({
-                //     data: item
-                // });
-                // document.item_list.push(item_created)
             });
 
+            // get table id by table_number
             const table = await TableService.getTableByNumber(table_number);
 
             if (!table) {
@@ -48,43 +45,66 @@ export class OrderService {
         }
     }
 
-    static async getAll() {
+    // to get all order
+    static async getAll(
+        page?: number,
+        limit?: number,
+        options?: IPrismaOptions
+    ) {
         try {
-            const result = await Database.instance.table.findFirst({
+            const db = options?.transaction || Database.instance;
+
+            const totalOrders = await db.order.count({});
+            const currentPage = page ?? 1;
+            const itemsPerPage = limit ?? 10;
+            const pages = Math.ceil(totalOrders / itemsPerPage);
+
+            const result = await Database.instance.order.findMany({
+                take: itemsPerPage,
+                skip: (currentPage - 1) * itemsPerPage,
             });
-            return result;
+
+            const filter_count = result ? result.length : 0;
+
+            // change filter
+            return {
+                meta: {
+                    total_count: totalOrders,
+                    filter_count: filter_count,
+                    pages: pages
+                },
+                result
+            };
         } catch (error) {
             console.log('error in getting all tables:', error);
             throw new Error('SomethingWentWrong');
         }
     }
 
-    static async updateOtp(table_number: number, otp: string) {
-        const table = await Database.instance.table.findFirst({
-            where: {
-                table_number
-            }
-        });
-        if (!table) {
-            throw new Error('ResourceNotFound: Table');
-        }
-
-        if (table.otp) {
-            throw new Error('OTP exists');
-        }
-
-        await Database.instance.table.update({
-            where: {
-                id: table.id
-            },
-            data: {
-                otp: {
-                    set: otp
+    // to fetch all orders & items in each by table number
+    static async getByTableNumber(tableNumber: number, options?: IPrismaOptions) {
+        try {
+            const db = options?.transaction || Database.instance;
+            const orders = await db.order.findMany({
+                where: {
+                    tableNumber
+                },
+                include: {
+                    item_list: true
                 }
-            }
-        });
+            });
 
-        return true;
+            if (!orders) {
+                throw new Error('ResourceNotFound: Order');
+            }
+
+            return orders;
+        } catch (error) {
+            console.log('Error in fetching order by table number');
+            throw new Error('SomethingWentWrong');
+        }
     }
+
+
 
 }
