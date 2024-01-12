@@ -1,8 +1,8 @@
 import { Item, Order, Prisma } from "@prisma/client";
 
-export type IorderPrisma = Order;
-export type IitemPrisma = Item;
+export type IOrderPrisma = Order;
+export type IItemPrisma = Item;
 
-export type IorderCreatePrisma = Prisma.OrderUncheckedCreateInput;
-export type IitemCreatePrisma = Prisma.ItemUncheckedCreateInput;
+export type IOrderCreatePrisma = Prisma.OrderUncheckedCreateInput;
+export type IItemCreatePrisma = Prisma.ItemUncheckedCreateInput;
 

@@ -1,32 +1,45 @@
 import Database from "../../loaders/database"
-import { IitemCreatePrisma, IitemPrisma } from "../../types/order/orderType";
+import { IItemPrisma } from "../../types/order/orderType";
+import { IPrismaOptions } from "../../types/prisma/prisma";
+import { TableService } from "../admin/table";
 import { ProductService } from "../product/product";
 
 export class OrderService {
 
     // table number & item_lists (product_id(string) & qty (int))
-    static async create(table_number: number, item_list: IitemPrisma[]) {
+    static async create(
+        table_number: number,
+        item_list: IItemPrisma[],
+        options?: IPrismaOptions) {
         try {
-            const document: IitemCreatePrisma[] = [];
+            const db = options?.transaction || Database.instance;
 
+            // check if product exits by product_id
             item_list.forEach(async (item) => {
-
-                // check if product exits by product_id
                 if (!(await ProductService.getProductById(item.productId))) {
                     throw new Error('ResourceNotFound: product')
                 }
-
-                // document.push(item);
-                // check if product exists
-                const item_created = await Database.instance.item.create({
-                    data: item
-                });
-
-                document.push(item_created)
+                // await Database.instance.item.create({
+                //     data: item
+                // });
+                // document.item_list.push(item_created)
             });
 
-            const result = await Database.instance.order.create({
-                data: document
+            const table = await TableService.getTableByNumber(table_number);
+
+            if (!table) {
+                throw new Error("ResourceNotFound: Table");
+            }
+
+            const result = await db.order.create({
+                data: {
+                    tableNumber: table.table_number,
+                    item_list: {
+                        createMany: {
+                            data: item_list
+                        }
+                    }
+                }
             });
             return result;
         } catch (error) {

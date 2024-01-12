@@ -4,6 +4,7 @@ import { IProductCreatePrisma, IProductPrisma, IProductUpdatePrisma } from "../.
 
 export class ProductService {
     // table number & item_lists (product_id(string) & qty (int))
+
     static async create(
         data: IProductPrisma,
         options?: IPrismaOptions
@@ -40,6 +41,9 @@ export class ProductService {
 
     static async getProductById(id: string): Promise<IProductPrisma | null> {
         try {
+            if (!id) {
+                throw new Error("SomethingWentWrong");
+            }
             const result = await Database.instance.product.findUnique({
                 where: {
                     id

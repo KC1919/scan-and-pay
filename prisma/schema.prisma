@@ -41,10 +41,8 @@ model Order {
   payment_time   DateTime?
   status         String    @default("pending")
   tableNumber    Int       @unique
-  userId         String    @unique @db.ObjectId
 
   item_list Item[]
-  user      User   @relation(fields: [userId], references: [id])
   table     Table  @relation(fields: [tableNumber], references: [table_number])
 }
 
@@ -56,14 +54,6 @@ model Item {
 
   product Product @relation(fields: [productId], references: [id])
   order   Order   @relation(fields: [orderId], references: [id])
-}
-
-model User {
-  id          String  @id @default(auto()) @map("_id") @db.ObjectId
-  name        String
-  phone       Int
-  reset_token String?
-  order       Order?
 }
 
 model Admin {
@@ -80,5 +70,16 @@ model Table {
   id           String  @id @default(auto()) @map("_id") @db.ObjectId
   table_number Int     @unique
   otp          String?
-  order        Order?
+  qrcode       String  @unique
+
+  order Order?
+  user  User?
+}
+
+model User {
+  id          String @id @default(auto()) @map("_id") @db.ObjectId
+  name        String
+  phone       Int
+  tableNumber Int    @unique
+  table       Table  @relation(fields: [tableNumber], references: [table_number])
 }

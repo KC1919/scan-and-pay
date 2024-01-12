@@ -1,11 +1,13 @@
 import Database from "../../loaders/database"
 import { tableCreatePrisma } from "../../types/admin/tableType";
+import { IPrismaOptions } from "../../types/prisma/prisma";
 
 export class TableService {
-    static async create(table_number: number) {
+    static async create(table_number: number, qrcode: string) {
         try {
             const document: tableCreatePrisma = {
-                table_number
+                table_number,
+                qrcode
             }
             const result = await Database.instance.table.create({
                 data: document
@@ -54,6 +56,24 @@ export class TableService {
         });
 
         return true;
+    }
+
+    static async getTableByNumber(
+        table_number: number,
+        options?: IPrismaOptions
+    ) {
+        if (!table_number) {
+            throw new Error('TableNumberNotDefined');
+        }
+        const db = options?.transaction || Database.instance;
+
+        const result = db.table.findFirst({
+            where: {
+                table_number
+            }
+        });
+
+        return result;
     }
 
 }
