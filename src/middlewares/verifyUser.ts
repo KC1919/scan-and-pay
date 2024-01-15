@@ -8,13 +8,13 @@ const verifyUser = async (
 ) => {
     try {
         const token = request.cookies['secret'];
-        const jwt_key = process.env.JWT_SECRET_KEY;
+        const jwt_key = process.env.JWT_SECRET_KEY as string;
         const payload = await jwt.verify(token, jwt_key);
         if (payload !== null) {
             if (payload.isAdmin === true) {
                 request.user = payload.email;
             } else if (payload.isAdmin === false) {
-                request.table = payload.table;
+                request.table_number = payload.table_number;
             }
             next();
         } else {

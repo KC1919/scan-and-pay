@@ -10,12 +10,17 @@ export class UserService {
             const document: userCreatePrisma = {
                 name,
                 phone,
+                tableNumber:table_number
             };
             const userResult = Database.instance.user.create({
                 data: document,
             });
 
             const otp = await OtpService.generateOtp();
+
+            if(!otp){
+                throw new Error('Otp undefined');
+            }
 
             const otpResult = await TableService.updateOtp(otp, table_number);
 

@@ -7,7 +7,7 @@ class TableController {
         response: express.Response
     ) => {
         const { table_number } = request.body;
-        const qrcode: string = await generateQRCode(table_number);
+        const qrcode = await generateQRCode(table_number) as string;
         const result = await TableService.create(table_number, qrcode);
         return response.json({
             status: true,

@@ -10,4 +10,11 @@ const generateQRCode = async (table_number:number) => {
     }
 }
 
+// (async()=>{
+//     const resp=await generateQRCode(5);
+//     console.log(resp);
+//     console.log(typeof resp);
+// })()
+
+
 export default generateQRCode;

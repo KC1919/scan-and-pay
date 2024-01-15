@@ -15,6 +15,6 @@ const generateOtp = async () => {
     }
 };
 
-// generateOtp();
+generateOtp();
 
 export default generateOtp;
