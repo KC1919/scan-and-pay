@@ -4,8 +4,12 @@ import verifyUser from '../../middlewares/verifyUser';
 
 const TableRouter = express.Router();
 
-TableRouter.post('/create', verifyUser, TableController.create);
-
-TableRouter.get('/all', verifyUser, TableController.getAll);
+TableRouter.post('/create', verifyUser, TableController.create)
+    .get('/all', verifyUser, TableController.getAll)
+    .get(
+        '/:table_number',
+        verifyUser,
+        TableController.getTableByNumber
+    );
 
 export default TableRouter;

@@ -3,12 +3,17 @@ import generateOTP from '../../utils/generateOTP';
 
 export class OtpService {
     // verifying user otp service
-    static async verifyOtp(otp: number, table_number: number) {
+    static async verifyOtp(
+        otp: number | string,
+        table_number: number | string
+    ) {
         try {
+            otp = Number(otp);
+            table_number = Number(table_number);
             // fetching the otp saved in the database
             const result = await Database.instance.table.findFirst({
                 where: {
-                    table_number: table_number,
+                    tableNumber: table_number,
                 },
                 select: {
                     otp: true,
@@ -17,15 +22,6 @@ export class OtpService {
 
             if (result?.otp === otp) {
                 console.log('Otp verified!');
-                // delete otp from the database after verification 
-                // await Database.instance.table.update({
-                //     where: {
-                //         table_number: table_number,
-                //     },
-                //     data: {
-                //         otp: null,
-                //     },
-                // });
                 return true;
             }
             return false;

@@ -7,9 +7,9 @@ class TableController {
         response: express.Response
     ) => {
         const { table_number } = request.body;
-        const qrcode = await generateQRCode(table_number) as string;
-        const result = await TableService.create(table_number, qrcode);
-        return response.json({
+        const qrcode = (await generateQRCode(table_number)) as string;
+        const result = await TableService.create(Number(table_number), qrcode);
+        return response.status(201).json({
             status: true,
             content: {
                 data: result,
@@ -28,6 +28,20 @@ class TableController {
                 data: result,
             },
         });
+    };
+
+    static getTableByNumber = async (
+        request: express.Request,
+        response: express.Response
+    ) => {
+        const { table_number } = request.params;
+        const result = await TableService.getTableByNumber(
+            Number(table_number)
+        );
+
+        // console.log(result);
+
+        return response.send(result);
     };
 
     static updateOtp = async (

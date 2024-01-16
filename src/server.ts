@@ -3,42 +3,53 @@ import express, { Express } from 'express';
 import Database from './loaders/database';
 import { FrameworkLoader } from './loaders/framework';
 import TableRouter from './api/admin/table';
+import AuthRouter from './api/admin/auth';
 import cookieParser from 'cookie-parser';
+import cors from 'cors';
 
 const Server = async (): Promise<{ app: Express; server: http.Server }> => {
-  const app = express();
+    const app = express();
 
-  app.use(cookieParser());
+    app.use(
+        cors({
+            origin: 'http://127.0.0.1:5500',
+        })
+    );
 
-  const server = http.createServer(app);
+    app.use(express.static('public'));
 
-  // Loaders
-  await Database.Loader();
-  FrameworkLoader({ app });
+    app.use(cookieParser());
 
-  // API Routes
-  app.use('/v1/api/table', TableRouter);
+    const server = http.createServer(app);
 
-  // app.use(RefreshTokenMiddleware);
-  // app.use('/v1/other', OtherRouter);
+    // Loaders
+    await Database.Loader();
+    FrameworkLoader({ app });
 
-  app.get('/', (request: express.Request, response: express.Response) =>
-    response.json({
-      status: true,
-      content: {
-        data: 'Welcome to scan & pay API',
-      }
-    })
-  );
+    // API Routes
+    app.use('/api/v1/tables', TableRouter);
+    app.use('/api/v1/auth', AuthRouter);
 
-  app.all('*', async () => {
-    //   throw new NotFoundError();
-  });
+    // app.use(RefreshTokenMiddleware);
+    // app.use('/v1/other', OtherRouter);
 
-  // Middlewares
-  // app.use(ErrorHandler);
+    app.get('/', (request: express.Request, response: express.Response) =>
+        response.json({
+            status: true,
+            content: {
+                data: 'Welcome to scan & pay API',
+            },
+        })
+    );
 
-  return { app, server };
+    app.all('*', async () => {
+        //   throw new NotFoundError();
+    });
+
+    // Middlewares
+    // app.use(ErrorHandler);
+
+    return { app, server };
 };
 export default Server;
 
