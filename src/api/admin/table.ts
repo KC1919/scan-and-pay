@@ -12,9 +12,4 @@ TableRouter.get(
     '/all',
     TableController.getAll
 );
-
-TableRouter.put(
-    '/otp',
-    Tab
-);
 export default TableRouter;

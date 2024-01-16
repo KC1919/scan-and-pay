@@ -17,7 +17,21 @@ export class ProductController {
         });
     }
 
-    static get = async (
+    static getProduct = async (
+        request: express.Request,
+        response: express.Response
+    ) => {
+        const { id } = request.params;
+        const result = await ProductService.getProductById(id as string);
+        return response.status(200).json({
+            status: true,
+            content: {
+                data: result
+            }
+        });
+    }
+
+    static getAllProducts = async (
         request: express.Request,
         response: express.Response
     ) => {

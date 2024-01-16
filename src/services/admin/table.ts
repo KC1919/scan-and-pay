@@ -3,15 +3,23 @@ import { tableCreatePrisma } from "../../types/admin/tableType";
 import { IPrismaOptions } from "../../types/prisma/prisma";
 
 export class TableService {
-    static async create(table_number: number, qrcode: string) {
+    static async create(
+        table_number: number,
+        qrcode: string,
+        options?: IPrismaOptions
+    ) {
         try {
+            const db = options?.transaction || Database.instance;
+            let result = {};
             const document: tableCreatePrisma = {
                 table_number,
                 qrcode
             }
-            const result = await Database.instance.table.create({
+            // create table
+            result = await db.table.create({
                 data: document
             });
+
             return result;
         } catch (error) {
             console.log('error in creating table:', error);
@@ -60,32 +68,43 @@ export class TableService {
         }
     }
 
-    static async updateOtp(table_number: number, otp: string) {
-        const table = await Database.instance.table.findFirst({
-            where: {
-                table_number
-            }
-        });
-        if (!table) {
-            throw new Error('ResourceNotFound: Table');
-        }
-
-        if (table.otp) {
-            throw new Error('OTP exists');
-        }
-
-        await Database.instance.table.update({
-            where: {
-                id: table.id
-            },
-            data: {
-                otp: {
-                    set: otp
+    // update OTP
+    static async updateOtp(
+        table_number: number,
+        otp: string,
+        options?: IPrismaOptions
+    ) {
+        try {
+            const db = options?.transaction || Database.instance;
+            const table = await db.table.findFirst({
+                where: {
+                    table_number
                 }
+            });
+            if (!table) {
+                throw new Error('ResourceNotFound: Table');
             }
-        });
 
-        return true;
+            if (table.otp) {
+                throw new Error('OTP exists');
+            }
+
+            await db.table.update({
+                where: {
+                    id: table.id
+                },
+                data: {
+                    otp: {
+                        set: otp
+                    }
+                }
+            });
+
+            return true;
+        } catch (error) {
+            console.log('Failed to update OTP');
+        }
+
     }
 
     static async getTableByNumber(

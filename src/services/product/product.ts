@@ -16,15 +16,15 @@ export class ProductService {
             const {
                 name,
                 quantity,
-                cost_price,
-                selling_price,
+                costPrice,
+                sellingPrice,
                 categoryId
             } = data;
             const document: IProductCreatePrisma = {
                 name,
                 quantity,
-                cost_price,
-                selling_price,
+                costPrice,
+                sellingPrice,
                 categoryId  // Optional field
             };
 
@@ -62,7 +62,7 @@ export class ProductService {
         options?: IPrismaOptions
     ) {
         const db = options?.transaction || Database.instance;
-        const product = await Database.instance.product.findUnique({
+        const product = await db.product.findUnique({
             where: {
                 id
             }
@@ -72,8 +72,8 @@ export class ProductService {
         }
         const {
             name,
-            cost_price,
-            selling_price,
+            costPrice,
+            sellingPrice,
             categoryId,
             quantity
         } = data;
@@ -85,12 +85,12 @@ export class ProductService {
             document.name = name;
         }
 
-        if (typeof cost_price !== 'undefined') {
-            document.cost_price = cost_price;
+        if (typeof costPrice !== 'undefined') {
+            document.costPrice = costPrice;
         }
 
-        if (typeof selling_price !== 'undefined') {
-            document.selling_price = selling_price;
+        if (typeof sellingPrice !== 'undefined') {
+            document.sellingPrice = sellingPrice;
         }
 
         if (typeof categoryId !== 'undefined') {
