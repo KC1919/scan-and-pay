@@ -60,28 +60,29 @@ model Admin {
 }
 
 model Table {
-  id          String  @id @default(auto()) @map("_id") @db.ObjectId
-  tableNumber Int     @unique
+  id          String @id @default(auto()) @map("_id") @db.ObjectId
+  tableNumber Int    @unique
   otp         Int?
-  qrcode      String  @unique
+  qrcode      String @unique
 
   order Order?
   user  User[]
 }
 
 model User {
-  id          String @id @default(auto()) @map("_id") @db.ObjectId
+  id          String  @id @default(auto()) @map("_id") @db.ObjectId
   name        String
   phone       Int
-  tableNumber Int
-  table       Table  @relation(fields: [tableNumber], references: [tableNumber])
+  tableNumber Int?
+  verified    Boolean @default(false)
+  table       Table?  @relation(fields: [tableNumber], references: [tableNumber])
 }
 
 model OrderHistory {
   id          String    @id @default(auto()) @map("_id") @db.ObjectId
   tableNumber Int
   totalAmount Float
-  userInfo    Json        
+  userInfo    Json
   orderid     String    @unique
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt

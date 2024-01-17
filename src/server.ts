@@ -6,6 +6,7 @@ import TableRouter from './api/admin/table';
 import AuthRouter from './api/admin/auth';
 import cookieParser from 'cookie-parser';
 import cors from 'cors';
+import UserRouter from './api/user/user';
 
 const Server = async (): Promise<{ app: Express; server: http.Server }> => {
     const app = express();
@@ -28,6 +29,7 @@ const Server = async (): Promise<{ app: Express; server: http.Server }> => {
 
     // API Routes
     app.use('/api/v1/tables', TableRouter);
+    app.use('/api/v1/users/', UserRouter);
     app.use('/api/v1/auth', AuthRouter);
 
     // app.use(RefreshTokenMiddleware);

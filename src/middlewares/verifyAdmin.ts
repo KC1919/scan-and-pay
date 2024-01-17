@@ -1,7 +1,7 @@
 import jwt from 'jsonwebtoken';
 import express from 'express';
 
-const verifyUser = async (
+const verifyAdmin = async (
     request: express.Request,
     response: express.Response,
     next: express.NextFunction
@@ -10,18 +10,17 @@ const verifyUser = async (
         const token = request.cookies['secret'];
 
         // const jwt_key = process.env.JWT_SECRET_KEY as string;
-        const payload = await jwt.verify(token, 'akdsj7#!642@42545');
-        console.log(payload);
+        const payload = await jwt.verify(token, 'akdsj7#!642@42545');        
 
         if (payload !== null) {
-            if (!payload.isAdmin) {
-                request.table_number = payload.table_number;
+            if (payload.isAdmin === true) {
+                request.user = payload.email;
                 next();
             } else {
                 console.log('Unauthorized user!');
             }
         } else {
-            throw new Error('Failed to verify user!');
+            throw new Error('Failed to verify admin user!');
         }
     } catch (error: any) {
         console.log('Failed to verify user, server error:', error);
@@ -32,4 +31,4 @@ const verifyUser = async (
     }
 };
 
-export default verifyUser;
+export default verifyAdmin;

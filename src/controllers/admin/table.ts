@@ -57,6 +57,21 @@ class TableController {
             },
         });
     };
+
+    static resetTable = async (
+        request: express.Request,
+        response: express.Response
+    ) => {
+        const { table_number } = request.params;
+
+        const result = await TableService.resetTable(Number(table_number));
+        // console.log(result);
+
+        return response.status(204).json({
+            message: 'Table reset successfull',
+            status: true,
+        });
+    };
 }
 
 export default TableController;
