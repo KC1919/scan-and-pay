@@ -7,8 +7,11 @@ const tableSchema = new mongoose.Schema({
         unique: true,
     },
     otp: {
-        type: String,
+        type: Number,
     },
+    session: {
+        type: String,
+    }
 });
 
 const Table = mongoose.model('Table', tableSchema);

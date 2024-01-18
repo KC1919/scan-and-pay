@@ -1,5 +1,6 @@
 export interface IRequestQuery {
     filter: string | undefined;
+    filterColumn: string | undefined;
     page: number | undefined;
     limit: number | undefined;
     orderBy: string | undefined;

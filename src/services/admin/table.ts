@@ -1,23 +1,19 @@
-import Database from "../../loaders/database"
-import { tableCreatePrisma } from "../../types/admin/tableType";
-import { IPrismaOptions } from "../../types/prisma/prisma";
+import { PrismaClient } from '@prisma/client';
+import Database from '../../loaders/database';
+import { IPrismaOptions } from '../../types/prisma/prisma';
+import { tableCreatePrisma } from '../../types/admin/tableType';
+const prisma = new PrismaClient();
 
 export class TableService {
-    static async create(
-        table_number: number,
-        qrcode: string,
-        options?: IPrismaOptions
-    ) {
+    // creating table
+    static async create(table_number: number, qrcode: string) {
         try {
-            const db = options?.transaction || Database.instance;
-            let result = {};
             const document: tableCreatePrisma = {
-                table_number,
-                qrcode
-            }
-            // create table
-            result = await db.table.create({
-                data: document
+                tableNumber: table_number,
+                qrcode,
+            };
+            const result = await Database.instance.table.create({
+                data: document,
             });
 
             return result;
@@ -44,7 +40,7 @@ export class TableService {
 
             const result = await Database.instance.table.findMany({
                 select: {
-                    table_number: true,
+                    tableNumber: true,
                     otp: true
                 },
                 take: itemsPerPage,
@@ -68,61 +64,93 @@ export class TableService {
         }
     }
 
-    // update OTP
-    static async updateOtp(
-        table_number: number,
-        otp: string,
-        options?: IPrismaOptions
-    ) {
+    static async getTableByNumber(table_number: number) {
         try {
-            const db = options?.transaction || Database.instance;
-            const table = await db.table.findFirst({
+            const table = await Database.instance.table.findFirst({
                 where: {
-                    table_number
-                }
+                    tableNumber: table_number,
+                },
             });
+
             if (!table) {
-                throw new Error('ResourceNotFound: Table');
+                throw new Error('Table does not exist');
             }
+            return table;
+        } catch (error) {
+            console.log('Failed to get table data, server error: ', error);
+        }
+    }
 
-            if (table.otp) {
-                throw new Error('OTP exists');
-            }
-
-            await db.table.update({
+    // updating a table with the otp for the table_number
+    static async updateOtp(otp: number, table_number: number) {
+        try {
+            const result = await Database.instance.table.update({
                 where: {
-                    id: table.id
+                    tableNumber: table_number,
                 },
                 data: {
-                    otp: {
-                        set: otp
-                    }
+                    otp,
+                },
+            });
+            return result;
+        } catch (error) {
+            console.log('failed to update otp:', error);
+        }
+    }
+
+    // delete otp service and disconnect users from that table
+    // fetch table via table_number,
+    static async resetTable(table_number: number) {
+        try {
+            // prisma transaction
+            await prisma.$transaction(async (tx) => {
+                // fetch table and users if associated
+                const table = await tx.table.findFirst({
+                    where: {
+                        tableNumber: table_number,
+                    },
+                    include: {
+                        user: true,
+                    },
+                });
+
+                // if no table found
+                if (!table) {
+                    throw new Error(
+                        `No table found with table number: ${table_number}`
+                    );
+                }
+
+                // if table does not have an OTP
+                if (!table.otp) {
+                    throw new Error('Table is empty');
+                } else {
+                    // extracting user ids of the user associated with the table
+                    const userIds = table.user.map((user) => {
+                        return user.id;
+                    });
+
+                    // making the OTP null for the table and disassociating users from the table
+
+                    await tx.table.update({
+                        where: {
+                            tableNumber: table_number,
+                        },
+                        data: {
+                            otp: null,
+                            user: {
+                                disconnect: userIds.map((id) => ({
+                                    id,
+                                })),
+                            },
+                        },
+                    });
                 }
             });
-
             return true;
         } catch (error) {
-            console.log('Failed to update OTP');
+            console.log('Failed to reset table, server error', error);
         }
-
     }
-
-    static async getTableByNumber(
-        table_number: number,
-        options?: IPrismaOptions
-    ) {
-        if (!table_number) {
-            throw new Error('TableNumberNotDefined');
-        }
-        const db = options?.transaction || Database.instance;
-
-        const result = db.table.findFirst({
-            where: {
-                table_number
-            }
-        });
-
-        return result;
-    }
-
 }
+

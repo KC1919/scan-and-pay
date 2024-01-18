@@ -17,9 +17,9 @@ model Product {
   createdAt    DateTime  @default(now())
   updatedAt    DateTime  @updatedAt
   deletedAt    DateTime?
-  categoryId   String    @db.ObjectId
+  categoryId   String?   @db.ObjectId
 
-  category Category @relation(fields: [categoryId], references: [id])
+  category Category? @relation(fields: [categoryId], references: [id])
 }
 
 model Category {
@@ -60,21 +60,22 @@ model Admin {
 }
 
 model Table {
-  id          String  @id @default(auto()) @map("_id") @db.ObjectId
-  tableNumber Int     @unique
-  otp         String?
-  qrcode      String  @unique
+  id          String @id @default(auto()) @map("_id") @db.ObjectId
+  tableNumber Int    @unique
+  otp         Int?
+  qrcode      String @unique
 
   order Order?
   user  User[]
 }
 
 model User {
-  id          String @id @default(auto()) @map("_id") @db.ObjectId
+  id          String  @id @default(auto()) @map("_id") @db.ObjectId
   name        String
   phone       Int
-  tableNumber Int
-  table       Table  @relation(fields: [tableNumber], references: [tableNumber])
+  tableNumber Int?
+  verified    Boolean @default(false)
+  table       Table?  @relation(fields: [tableNumber], references: [tableNumber])
 }
 
 model OrderHistory {

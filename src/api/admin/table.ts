@@ -1,15 +1,12 @@
 import express from 'express';
 import TableController from '../../controllers/admin/table';
+import verifyAdmin from '../../middlewares/verifyAdmin';
 
-const TableRouter = express.Router();
+const UserTableRouter = express.Router();
 
-TableRouter.post(
-    '/create',
-    TableController.create
-);
+UserTableRouter.post('/create', verifyAdmin, TableController.create)
+    .get('/all', verifyAdmin, TableController.getAll)
+    .get('/:table_number', verifyAdmin, TableController.getTableByNumber)
+    .put('/reset/:table_number', verifyAdmin, TableController.resetTable);
 
-TableRouter.get(
-    '/all',
-    TableController.getAll
-);
-export default TableRouter;
+export default UserTableRouter;

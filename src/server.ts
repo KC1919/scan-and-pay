@@ -3,39 +3,59 @@ import express, { Express } from 'express';
 import Database from './loaders/database';
 import { FrameworkLoader } from './loaders/framework';
 import TableRouter from './api/admin/table';
+import AuthRouter from './api/admin/auth';
+import cookieParser from 'cookie-parser';
+import cors from 'cors';
+import UserRouter from './api/user/user';
+import OrderRouter from './api/order/order';
+import ProductRouter from './api/product/product';
 
 const Server = async (): Promise<{ app: Express; server: http.Server }> => {
-  const app = express();
+    const app = express();
 
-  const server = http.createServer(app);
+    app.use(
+        cors({
+            origin: 'http://127.0.0.1:5500',
+        })
+    );
 
-  // Loaders
-  await Database.Loader();
-  FrameworkLoader({ app });
+    app.use(express.static('public'));
 
-  // API Routes
-  app.use('/v1/api/table', TableRouter);
+    app.use(cookieParser());
 
-  // app.use(RefreshTokenMiddleware);
-  // app.use('/v1/other', OtherRouter);
+    const server = http.createServer(app);
 
-  app.get('/', (request: express.Request, response: express.Response) =>
-    response.json({
-      status: true,
-      content: {
-        data: 'Welcome to scan & pay API',
-      }
-    })
-  );
+    // Loaders
+    await Database.Loader();
+    FrameworkLoader({ app });
 
-  app.all('*', async () => {
-    //   throw new NotFoundError();
-  });
+    // API Routes
+    app.use('/api/v1/tables', TableRouter);
+    app.use('/api/v1/orders', OrderRouter);
+    app.use('/api/v1/products', ProductRouter);
+    app.use('/api/v1/users/', UserRouter);
+    app.use('/api/v1/auth', AuthRouter);
 
-  // Middlewares
-  // app.use(ErrorHandler);
+    // app.use(RefreshTokenMiddleware);
+    // app.use('/v1/other', OtherRouter);
 
-  return { app, server };
+    app.get('/', (request: express.Request, response: express.Response) =>
+        response.json({
+            status: true,
+            content: {
+                data: 'Welcome to scan & pay API',
+            },
+        })
+    );
+
+    app.all('*', async () => {
+        //   throw new NotFoundError();
+    });
+
+    // Middlewares
+    // app.use(ErrorHandler);
+
+    return { app, server };
 };
 export default Server;
 
