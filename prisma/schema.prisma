@@ -8,19 +8,18 @@ datasource db {
 }
 
 model Product {
-  id            String    @id @default(auto()) @map("_id") @db.ObjectId
-  name          String    @unique
-  quantity      Int       @default(0)
-  cost_price    Int
-  selling_price Int
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
-  deletedAt     DateTime?
-  orderId       String    @db.ObjectId
-  categoryId    String    @db.ObjectId
+  id           String    @id @default(auto()) @map("_id") @db.ObjectId
+  name         String    @unique
+  quantity     Int       @default(0)
+  costPrice    Float
+  imageUrl     String?
+  sellingPrice Float
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+  deletedAt    DateTime?
+  categoryId   String    @db.ObjectId
 
   category Category @relation(fields: [categoryId], references: [id])
-  order    Order    @relation(fields: [orderId], references: [id])
 }
 
 model Category {
@@ -33,28 +32,21 @@ model Category {
   products Product[]
 }
 
+// cancel order
+// add itme, plcae order
+
 model Order {
-  id             String    @id @default(auto()) @map("_id") @db.ObjectId
-  createdAt      DateTime  @default(now())
-  updatedAt      DateTime  @updatedAt
-  deletedAt      DateTime?
-  payment_method String?
-  payment_time   DateTime?
-  status         String    @default("pending")
-  tableNumber    Int       @unique
-  userId         String    @unique @db.ObjectId
+  id            String    @id @default(auto()) @map("_id") @db.ObjectId
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  deletedAt     DateTime?
+  paymentMethod String?
+  paymentTime   DateTime?
+  items         Json?
+  status        String    @default("pending")
+  tableNumber   Int       @unique
 
-  user     User      @relation(fields: [userId], references: [id])
-  table    Table     @relation(fields: [tableNumber], references: [table_number])
-  products Product[]
-}
-
-model User {
-  id          String  @id @default(auto()) @map("_id") @db.ObjectId
-  name        String
-  phone       Int     @unique
-  reset_token String?
-  order       Order?
+  table Table @relation(fields: [tableNumber], references: [tableNumber])
 }
 
 model Admin {
@@ -68,8 +60,31 @@ model Admin {
 }
 
 model Table {
-  id           String  @id @default(auto()) @map("_id") @db.ObjectId
-  table_number Int     @unique
-  otp          String?
-  order        Order?
+  id          String @id @default(auto()) @map("_id") @db.ObjectId
+  tableNumber Int    @unique
+  otp         Int?
+  qrcode      String @unique
+
+  order Order?
+  user  User[]
+}
+
+model User {
+  id          String  @id @default(auto()) @map("_id") @db.ObjectId
+  name        String
+  phone       Int
+  tableNumber Int?
+  verified    Boolean @default(false)
+  table       Table?  @relation(fields: [tableNumber], references: [tableNumber])
+}
+
+model OrderHistory {
+  id          String    @id @default(auto()) @map("_id") @db.ObjectId
+  tableNumber Int
+  totalAmount Float
+  userInfo    Json
+  orderid     String    @unique
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  deletedAt   DateTime?
 }
