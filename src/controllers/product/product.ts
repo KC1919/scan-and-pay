@@ -33,7 +33,7 @@ export class ProductController {
         });
     }
 
-    static getAllProducts = async (
+    static getAll = async (
         request: express.Request,
         response: express.Response
     ) => {
@@ -87,6 +87,31 @@ export class ProductController {
         };
         // add validation here
         const result = await ProductService.update(id, data);
+        return response.status(200).json({
+            status: true,
+            content: {
+                data: result
+            }
+        });
+    }
+
+    // FE: send category_id
+    static putCategory = async (
+        request: express.Request,
+        response: express.Response
+    ) => {
+        const { id } = request.params;
+        const { category_id } = request.body;
+
+        if (id === undefined || category_id === undefined) {
+            return response.status(400).json({
+                status: true,
+                message: 'Provide required values'
+            });
+        }
+
+        // add validation here
+        const result = await ProductService.updateCategory(id, category_id);
         return response.status(200).json({
             status: true,
             content: {

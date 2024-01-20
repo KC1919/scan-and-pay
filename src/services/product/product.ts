@@ -10,7 +10,6 @@ export class ProductService {
         options?: IPrismaOptions
     ) {
         try {
-            console.log('data:', data);
             const db = options?.transaction || Database.instance;
 
             // deconstruct values from data
@@ -48,6 +47,13 @@ export class ProductService {
             const result = await Database.instance.product.findFirst({
                 where: {
                     id
+                },
+                include: {
+                    category: {
+                        select: {
+                            name: true
+                        }
+                    }
                 }
             });
             return result;
@@ -70,7 +76,6 @@ export class ProductService {
     ) {
         try {
             const db = options?.transaction || Database.instance;
-            console.log("Query in get all orders:", orderBy);
 
             // initialize all values
             const currentPage = page ?? 1;
@@ -81,25 +86,18 @@ export class ProductService {
             // so column is deletedAt & value to search is null
             const countFilter = filter ?? null;
             const countColumn = filterColumn ?? 'deletedAt';
-
-            const orderByColumn: string = orderBy ?? '-created_at';
-            const dateStart = startDate ? new Date(startDate).toISOString() : (new Date());
-            const dateEnd = endDate ? new Date(endDate).toISOString() : new Date();
-
-            // find all by default which werent deleted (so deletedAt doesnt have date)
-            //
-            const totalProducts = await db.product.count({
-                where: {
-                    [countColumn]: countFilter,
-                    createdAt: {
-                        gte: dateStart,
-                        lte: dateEnd
+            const whereClause: any = {
+                OR: [
+                    { deletedAt: { isSet: false } },
+                    { deletedAt: null },
+                    {
+                        [countColumn]: countFilter,
                     }
-                },
-            });
+                ],
+            }
 
-            const pages = Math.ceil(totalProducts / itemsPerPage);
-
+            // order by means on what paramters to sort on, whether asc or desc
+            const orderByColumn: string = orderBy ?? '-createdAt';
             const cleanorderByColumn: string = orderByColumn.startsWith('-')
                 ? orderByColumn.substring(1)
                 : orderByColumn;
@@ -107,11 +105,63 @@ export class ProductService {
                 ? PrismaOrder.desc
                 : PrismaOrder.asc;
 
+
+            const dateStart = startDate ? new Date(startDate).toISOString() : undefined;
+            const dateEnd = endDate ? new Date(endDate).toISOString() : undefined;
+
+            if (dateStart) {
+                whereClause.createdAt = {
+                    ...(whereClause.createdAt || {}),
+                    gte: dateStart,
+                };
+            }
+
+            if (dateEnd) {
+                whereClause.createdAt = {
+                    ...(whereClause.createdAt || {}),
+                    lte: dateEnd,
+                };
+            }
+
+            console.log(
+                "Current page: ", currentPage,
+                "\n items per page: ", itemsPerPage,
+                "\n searchFIlter: ", searchFilter,
+                "\n coount filter; filter: ", filter,
+                "\n count column: ", countColumn,
+                "\n orderByColumn: ", orderByColumn,
+                "\n start date: ", dateStart,
+                "\n end date:", dateEnd,
+                "\n where clause:", whereClause
+            );
+
+
+            // find all by default which werent deleted (so deletedAt doesnt have date)
+            const totalProducts = await db.product.findMany({
+                where: whereClause
+            });
+            console.log("totoal products:", totalProducts);
+            return totalProducts;
+            const pages = Math.ceil(totalProducts / itemsPerPage);
+
+            console.log(
+                "Total pages;", pages,
+                "\n clean orderby column", cleanorderByColumn,
+                "\n sort order:", sortOrder);
+
             // Filtering, pagination
             const result = await db.product.findMany({
                 where: {
                     name: searchFilter,
                     deletedAt: null
+                },
+                include: {
+                    category: {
+                        select: {
+                            id: true,
+                            name: true
+                        }
+                    }
                 },
                 orderBy: {
                     [cleanorderByColumn]: sortOrder
@@ -203,11 +253,15 @@ export class ProductService {
         }
     }
 
-    static async addCategory(
+    // this adds category to product if not present
+    static async updateCategory(
         id: string,
         category_id: string,
     ) {
         try {
+            if (!id) {
+                throw new Error('MissingProperty id:Product id');
+            }
             const product = this.getProductById(id);
             if (!product) {
                 throw new Error('ResourceNotFound: Product');

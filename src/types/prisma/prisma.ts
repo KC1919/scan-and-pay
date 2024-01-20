@@ -3,6 +3,7 @@ import { DefaultArgs, PrismaClientOptions } from "@prisma/client/runtime/library
 // import Database from "../../loaders/database";
 
 const prisma = new PrismaClient();
+export const PrismaNull = Prisma.AnyNull;
 export const PrismaOrder = Prisma.SortOrder;
 export type IPrismaTransaction =
     | typeof prisma
