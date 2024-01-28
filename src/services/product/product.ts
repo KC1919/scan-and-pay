@@ -18,6 +18,7 @@ export class ProductService {
                 quantity,
                 costPrice,
                 sellingPrice,
+                vegTag,
                 categoryId = null
             } = data;
             const document: IProductCreatePrisma = {
@@ -25,6 +26,8 @@ export class ProductService {
                 quantity,
                 costPrice,
                 sellingPrice,
+                vegTag,
+                deletedAt: null,
                 categoryId
             };
 
@@ -87,11 +90,12 @@ export class ProductService {
             const countFilter = filter ?? null;
             const countColumn = filterColumn ?? 'deletedAt';
             const whereClause: any = {
-                OR: [
+                AND: [
                     { deletedAt: { isSet: false } },
                     { deletedAt: null },
                     {
                         [countColumn]: countFilter,
+                        name: searchFilter
                     }
                 ],
             }
@@ -109,6 +113,7 @@ export class ProductService {
             const dateStart = startDate ? new Date(startDate).toISOString() : undefined;
             const dateEnd = endDate ? new Date(endDate).toISOString() : undefined;
 
+            // modify where clause for dates
             if (dateStart) {
                 whereClause.createdAt = {
                     ...(whereClause.createdAt || {}),
@@ -137,11 +142,10 @@ export class ProductService {
 
 
             // find all by default which werent deleted (so deletedAt doesnt have date)
-            const totalProducts = await db.product.findMany({
+            const totalProducts = await db.product.count({
                 where: whereClause
             });
             console.log("totoal products:", totalProducts);
-            return totalProducts;
             const pages = Math.ceil(totalProducts / itemsPerPage);
 
             console.log(
@@ -151,10 +155,7 @@ export class ProductService {
 
             // Filtering, pagination
             const result = await db.product.findMany({
-                where: {
-                    name: searchFilter,
-                    deletedAt: null
-                },
+                where: whereClause,
                 include: {
                     category: {
                         select: {
