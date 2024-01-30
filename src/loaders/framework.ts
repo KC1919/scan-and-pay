@@ -3,6 +3,8 @@ import helmet from 'helmet';
 import rateLimit from 'express-rate-limit';
 import ms from 'ms';
 import cookieparser from 'cookie-parser';
+import cors from 'cors';
+
 
 const RateLimitedMiddleware = rateLimit({
     windowMs: ms('1min'), // 1 minute
@@ -71,8 +73,14 @@ export const FrameworkLoader = ({
     // });
 
     app.use(helmet());
+    app.use(
+        cors({
+            origin: 'http://localhost:5173',
+        })
+    );
     app.use(express.json());
     app.use(express.urlencoded({ extended: true }));
+    app.use(express.static('public'));
     app.use(cookieparser('secret'));
     // app.use(
     //     express.json({

@@ -19,15 +19,30 @@ ProductRouter.get(
     '/all',
     ProductController.getAll
 );
+
 ProductRouter.get(
-    '/:id',
+    '/category/:id',
     ProductController.getProduct
 );
 
+ProductRouter.get(
+    '/category',
+    ProductController.getAllCategories
+);
+
+ProductRouter.post(
+    '/category',
+    ProductController.createCategory
+);
+
+ProductRouter.get(
+    '/:id/single',
+    ProductController.getProduct
+);
 // admin
 ProductRouter.put(
     '/:id/category',
     ProductController.putCategory
-)
+);
 
 export default ProductRouter;

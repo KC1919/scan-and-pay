@@ -47,6 +47,8 @@ export class ProductService {
             if (!id) {
                 throw new Error("SomethingWentWrong");
             }
+            console.log('GET AProduct by id');
+
             const result = await Database.instance.product.findFirst({
                 where: {
                     id
@@ -90,7 +92,7 @@ export class ProductService {
             const countFilter = filter ?? null;
             const countColumn = filterColumn ?? 'deletedAt';
             const whereClause: any = {
-                AND: [
+                OR: [
                     { deletedAt: { isSet: false } },
                     { deletedAt: null },
                     {

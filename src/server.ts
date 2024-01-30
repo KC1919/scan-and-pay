@@ -4,8 +4,6 @@ import Database from './loaders/database';
 import { FrameworkLoader } from './loaders/framework';
 import TableRouter from './api/admin/table';
 import AuthRouter from './api/admin/auth';
-import cookieParser from 'cookie-parser';
-import cors from 'cors';
 import UserRouter from './api/user/user';
 import OrderRouter from './api/order/order';
 import ProductRouter from './api/product/product';
@@ -13,20 +11,11 @@ import ProductRouter from './api/product/product';
 const Server = async (): Promise<{ app: Express; server: http.Server }> => {
     const app = express();
 
-    app.use(
-        cors({
-            origin: 'http://127.0.0.1:5500',
-        })
-    );
-
-    app.use(express.static('public'));
-
-    app.use(cookieParser());
-
     const server = http.createServer(app);
 
     // Loaders
     await Database.Loader();
+    // cookie parser, static, 
     FrameworkLoader({ app });
 
     // API Routes

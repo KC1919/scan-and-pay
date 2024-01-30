@@ -61,7 +61,7 @@ export class OrderService {
                 const product = await ProductService.getProductById(item.productId);
 
                 // a. Check if product exists
-                if (!product) {
+                if (!product || !product.quantity) {
                     throw new Error('ResourceNotFound: product')
                 }
 

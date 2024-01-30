@@ -3,11 +3,11 @@ import { IPrismaOptions } from "../../types/prisma/prisma";
 import { ICategoryCreatePrisma, ICategoryPrisma } from "../../types/product/categoryTypes";
 // import { IProductPrisma } from "../../types/product/productTypes";
 
-export class ProductService {
+export class CategoryService {
     // table number & item_lists (product_id(string) & qty (int))
 
     static async create(
-        data: ICategoryPrisma,
+        data: ICategoryCreatePrisma,
         options?: IPrismaOptions
     ) {
         try {
@@ -20,6 +20,7 @@ export class ProductService {
             const document: ICategoryCreatePrisma = {
                 name
             };
+            console.log('Create category:', data);
 
             const result = await db.category.create({
                 data: document
@@ -32,14 +33,21 @@ export class ProductService {
         }
     }
 
-    static async getProductsByCategory(id: string) {
+    static async getProductsByCategoryIdOrName(id: string) {
         try {
             if (!id) {
                 throw new Error("SomethingWentWrong");
             }
             const result = await Database.instance.category.findMany({
                 where: {
-                    id
+                    OR: [
+                        {
+                            id
+                        },
+                        {
+                            name: id
+                        }
+                    ]
                 },
                 select: {
                     id: true,
@@ -59,7 +67,7 @@ export class ProductService {
     ) {
         try {
             const db = options?.transaction || Database.instance;
-            const result = await db.category.findMany({
+            const result: ICategoryPrisma[] = await db.category.findMany({
                 where: {
                     deletedAt: {
                         not: null
