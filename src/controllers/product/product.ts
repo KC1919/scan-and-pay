@@ -3,7 +3,7 @@ import { ProductService } from "../../services/product/product";
 import { IProductPrisma } from "../../types/product/productTypes";
 import { IRequestQuery } from '../../types/fe/query';
 import { CategoryService } from '../../services/product/category';
-import { ICategoryCreatePrisma } from '../../types/product/categoryTypes';
+// import { ICategoryCreatePrisma } from '../../types/product/categoryTypes';
 
 export class ProductController {
     static create = async (
@@ -25,8 +25,7 @@ export class ProductController {
         request: express.Request,
         response: express.Response
     ) => {
-        const data = request.body as ICategoryCreatePrisma;
-
+        const data = request.body;
         const result = await CategoryService.create(data);
         return response.status(200).json({
             status: true,

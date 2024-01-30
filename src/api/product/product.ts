@@ -21,13 +21,13 @@ ProductRouter.get(
 );
 
 ProductRouter.get(
-    '/category/:id',
-    ProductController.getProduct
+    '/category/all',
+    ProductController.getAllCategories
 );
 
 ProductRouter.get(
-    '/category',
-    ProductController.getAllCategories
+    '/category/:id',
+    ProductController.getProduct
 );
 
 ProductRouter.post(

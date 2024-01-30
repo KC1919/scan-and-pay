@@ -13,6 +13,9 @@ export class CategoryService {
         try {
             const db = options?.transaction || Database.instance;
 
+            if (!data || !data.name) {
+                throw new Error('DataFormatWrong');
+            }
             // deconstruct values from data
             const {
                 name,
@@ -20,7 +23,6 @@ export class CategoryService {
             const document: ICategoryCreatePrisma = {
                 name
             };
-            console.log('Create category:', data);
 
             const result = await db.category.create({
                 data: document
@@ -57,7 +59,7 @@ export class CategoryService {
             console.log('Products of category:');
             return result;
         } catch (error) {
-            console.log('Error in getById in Product:', error);
+            console.log('Error in getProductsByCategoryIdOrName: ', error);
             throw new Error('SomethingWentWrong');
         }
     }
@@ -69,11 +71,13 @@ export class CategoryService {
             const db = options?.transaction || Database.instance;
             const result: ICategoryPrisma[] = await db.category.findMany({
                 where: {
-                    deletedAt: {
-                        not: null
-                    }
+                    OR: [
+                        { deletedAt: null },
+                        { deletedAt: { isSet: false } }
+                    ]
                 }
             });
+            console.log("all categories:", result);
 
             // change filter
             return result;

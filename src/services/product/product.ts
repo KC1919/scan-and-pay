@@ -63,7 +63,7 @@ export class ProductService {
             });
             return result;
         } catch (error) {
-            console.log('Error in getById in Product:', error);
+            console.log('Error in Service/product getProductById:', error);
             throw new Error('SomethingWentWrong');
         }
     }
