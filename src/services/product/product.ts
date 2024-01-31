@@ -68,7 +68,30 @@ export class ProductService {
         }
     }
 
-    static async getAll(
+    static async getAll() {
+        try {
+            const db = Database.instance;
+
+            // find all active products
+            const result = await db.product.findMany({
+                where: {
+                    OR: [
+                        { deletedAt: { isSet: false } },
+                        { deletedAt: null },
+                    ]
+                },
+
+            });
+
+            return result;
+
+        } catch (error) {
+            console.log('error in getting all tables:', error);
+            throw new Error('SomethingWentWrong');
+        }
+    }
+
+    static async getProductsQuery(
         filter?: string,
         filterColumn?: string,
         page?: number,

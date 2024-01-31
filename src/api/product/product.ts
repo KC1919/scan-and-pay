@@ -9,12 +9,19 @@ ProductRouter.post(
     ProductController.create
 );
 
+// to get products with pagination, filtering, and sorting
+ProductRouter.get(
+    '/',
+    ProductController.getProductsQuery
+);
+
 // admin
 ProductRouter.put(
     '/',
     ProductController.update
 )
 
+// for admin to get all
 ProductRouter.get(
     '/all',
     ProductController.getAll

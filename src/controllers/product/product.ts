@@ -74,9 +74,28 @@ export class ProductController {
                 data: result
             }
         });
-    }
+    };
 
     static getAll = async (
+        request: express.Request,
+        response: express.Response
+    ) => {
+        // const {
+        //     page,
+        //     limit
+        // } = request.query as unknown as IRequestQuery;
+
+        const result = await ProductService.getAll();
+
+        return response.status(200).json({
+            status: true,
+            content: {
+                data: result
+            }
+        });
+    };
+
+    static getProductsQuery = async (
         request: express.Request,
         response: express.Response
     ) => {
@@ -91,7 +110,7 @@ export class ProductController {
             endDate
         }: IRequestQuery = request.query as unknown as IRequestQuery;
 
-        const result = await ProductService.getAll(
+        const result = await ProductService.getProductsQuery(
             filter,
             filterColumn,
             page,
