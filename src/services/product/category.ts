@@ -1,6 +1,7 @@
 import Database from "../../loaders/database";
 import { IPrismaOptions } from "../../types/prisma/prisma";
 import { ICategoryCreatePrisma, ICategoryPrisma } from "../../types/product/categoryTypes";
+// import { ProductService } from "./product";
 // import { IProductPrisma } from "../../types/product/productTypes";
 
 export class CategoryService {
@@ -77,7 +78,6 @@ export class CategoryService {
                     ]
                 }
             });
-            console.log("all categories:", result);
 
             // change filter
             return result;
@@ -85,6 +85,94 @@ export class CategoryService {
             console.log('error in getting all categories', error);
             throw new Error('SomethingWentWrong');
         }
+    }
+
+    static async delete(
+        id: string,
+        all: boolean,
+        options?: IPrismaOptions
+    ) {
+        try {
+            const db = Database.instance || options?.transaction;
+
+            const category = await db.category.findFirst({
+                where: {
+                    id
+                },
+                include: {
+                    products: true
+                }
+            });
+
+            if (!category || category.deletedAt) {
+                throw new Error('ResourceNotFound: Category');
+            }
+
+            const products = category.products;
+
+
+            if (all) {
+                db.$transaction(async (t) => {
+                    await t.category.delete({
+                        where: {
+                            id
+                        },
+                    });
+                    // hard delete the products
+                    if (products) {
+                        for (let i = 0; i < products.length; i++) {
+                            const product = products[i];
+                            if (!product) {
+                                throw new Error('NOt able to traverse products');
+                            }
+                            // eslint-disable-next-line no-await-in-loop
+                            await t.product.delete({
+                                where: {
+                                    id: product.id
+                                },
+                            });
+                        }
+                    }
+                });
+
+            }
+            // soft delete
+            else {
+                db.$transaction(async (t) => {
+                    await t.category.update({
+                        where: {
+                            id
+                        },
+                        data: {
+                            deletedAt: new Date()
+                        }
+                    });
+                    // hard delete the products
+                    if (products) {
+                        for (let i = 0; i < products.length; i++) {
+                            const product = products[i];
+                            if (!product) {
+                                throw new Error('NOt able to traverse products');
+                            }
+                            // eslint-disable-next-line no-await-in-loop
+                            await t.product.update({
+                                where: {
+                                    id: product.id
+                                },
+                                data: {
+                                    deletedAt: new Date()
+                                }
+                            });
+                        }
+                    }
+                });
+            }
+            return true;
+        } catch (error) {
+            console.log('Error:', error);
+            return false;
+        }
+
     }
 
 }

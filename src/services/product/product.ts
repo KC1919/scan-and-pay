@@ -51,7 +51,11 @@ export class ProductService {
 
             const result = await Database.instance.product.findFirst({
                 where: {
-                    id
+                    id,
+                    OR: [
+                        { deletedAt: null },
+                        { deletedAt: { isSet: false } }
+                    ]
                 },
                 include: {
                     category: {
@@ -61,6 +65,10 @@ export class ProductService {
                     }
                 }
             });
+
+            if (!result) {
+                throw new Error('ResourceNotFound: Product');
+            }
             return result;
         } catch (error) {
             console.log('Error in Service/product getProductById:', error);
@@ -225,7 +233,7 @@ export class ProductService {
                     id
                 }
             });
-            if (!product) {
+            if (!product || product.deletedAt) {
                 throw new Error('ResourceNotFound: Product');
             }
             const {
@@ -310,6 +318,42 @@ export class ProductService {
         } catch (error) {
             console.log('error in adding to category', error);
             throw new Error('SomethingWentWrong')
+        }
+
+    }
+
+    static async delete(
+        id: string,
+        options?: IPrismaOptions
+    ) {
+        try {
+            const db = Database.instance || options?.transaction;
+
+            const product = await db.product.findFirst({
+                where: {
+                    id,
+                    OR: [
+                        { deletedAt: null },
+                        { deletedAt: { isSet: false } }
+                    ]
+                }
+            });
+
+            if (!product) {
+                throw new Error('ResourceNotFound: Product');
+            }
+
+            await db.product.update({
+                where: {
+                    id
+                },
+                data: {
+                    deletedAt: new Date()
+                }
+            });
+        } catch (error) {
+            console.log('Error in deleting product:', error);
+            return;
         }
 
     }
