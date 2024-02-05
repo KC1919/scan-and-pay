@@ -21,6 +21,7 @@ export class ProductService {
                 vegTag,
                 categoryId = null
             } = data;
+            console.log(' data in createProduct:', data);
             const document: IProductCreatePrisma = {
                 name,
                 quantity,
