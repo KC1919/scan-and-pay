@@ -21,7 +21,7 @@ export class ProductService {
                 vegTag,
                 categoryId = null
             } = data;
-            console.log(' data in createProduct:', data);
+            // console.log(' data in createProduct:', data);
             const document: IProductCreatePrisma = {
                 name,
                 quantity,
@@ -248,23 +248,23 @@ export class ProductService {
             // document picks fields which are passed in data
             const document: IProductUpdatePrisma = {};
 
-            if (typeof name !== 'undefined') {
+            if (typeof name !== 'undefined' && name !== null) {
                 document.name = name;
             }
 
-            if (typeof costPrice !== 'undefined') {
+            if (typeof costPrice !== 'undefined' && costPrice !== null) {
                 document.costPrice = costPrice;
             }
 
-            if (typeof sellingPrice !== 'undefined') {
+            if (typeof sellingPrice !== 'undefined' && sellingPrice !== null) {
                 document.sellingPrice = sellingPrice;
             }
 
-            if (typeof categoryId !== 'undefined') {
+            if (typeof categoryId !== 'undefined' && categoryId !== null) {
                 document.categoryId = categoryId;
             }
 
-            if (typeof quantity !== 'undefined') {
+            if (typeof quantity !== 'undefined' && quantity !== null) {
                 document.quantity = quantity;
             }
 
@@ -272,11 +272,12 @@ export class ProductService {
                 throw new Error('CustomMesage: Change value of atleast 1 fields');
             }
 
+            console.log('Document to update product:', document);
+
 
             const result = await db.product.update({
                 where: {
                     id,
-                    name: product.name
                 },
                 data: document
             });
