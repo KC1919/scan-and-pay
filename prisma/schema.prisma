@@ -11,6 +11,7 @@ model Product {
   id           String    @id @default(auto()) @map("_id") @db.ObjectId
   name         String    @unique
   quantity     Int?      @default(0)
+  description  String?   @default("Product description not yet given")
   costPrice    Float
   imageUrl     String?
   sellingPrice Float

@@ -67,7 +67,7 @@ export class OrderService {
 
                 // b. Check if qty ordered <= product qty
                 if (item.quantity > product.quantity) {
-                    throw new Error('UnderFlow: Products');
+                    throw new Error('UnderFlow: Items added for product is less than the quantity');
                 }
 
                 // c. Decrease qty of product
