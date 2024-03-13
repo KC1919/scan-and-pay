@@ -5,7 +5,6 @@ import ms from 'ms';
 import cookieparser from 'cookie-parser';
 import cors from 'cors';
 
-
 const RateLimitedMiddleware = rateLimit({
     windowMs: ms('1min'), // 1 minute
     max: 180, // Limit each IP to 180 requests per `window` (here, per minute)

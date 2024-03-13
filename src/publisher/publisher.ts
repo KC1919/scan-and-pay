@@ -1,4 +1,5 @@
 import * as amqp from 'amqplib';
+import { channel } from 'diagnostics_channel';
 
 const message = {
     id: '1',
@@ -34,7 +35,15 @@ class MessageQueue {
                     throw new Error('No message');
                 }
                 const input = JSON.parse(message?.content.toString());
-                console.log('input:', input, ' kind:', kind)
+                console.log('input:', input, ' kind:', kind);
+
+                // do the input
+
+                // calling the process subscribers
+                // success
+                if (1 < 2) {
+                    this.instance.ack(message);
+                }
             })
         } catch (error) {
             console.log('Error in subscribe:', error)

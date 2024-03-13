@@ -7,7 +7,7 @@ import AuthRouter from './api/admin/auth';
 import UserRouter from './api/user/user';
 import OrderRouter from './api/order/order';
 import ProductRouter from './api/product/product';
-import MessageQueue from './publisher/publisher';
+// import MessageQueue from './publisher/publisher';
 
 const Server = async (): Promise<{ app: Express; server: http.Server }> => {
     const app = express();
@@ -16,7 +16,7 @@ const Server = async (): Promise<{ app: Express; server: http.Server }> => {
 
     // Loaders
     await Database.Loader();
-    await MessageQueue.Loader();
+    // await MessageQueue.Loader();
     // cookie parser, static, 
     FrameworkLoader({ app });
 

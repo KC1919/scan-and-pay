@@ -1,4 +1,4 @@
-import jwt from 'jsonwebtoken';
+import jwt, { JwtPayload } from 'jsonwebtoken';
 import express from 'express';
 
 const verifyUser = async (
@@ -10,11 +10,12 @@ const verifyUser = async (
         const token = request.cookies['secret'];
 
         // const jwt_key = process.env.JWT_SECRET_KEY as string;
-        const payload = await jwt.verify(token, 'akdsj7#!642@42545');
+        const payload = jwt.verify(token, 'akdsj7#!642@42545') as JwtPayload;
         console.log(payload);
 
         if (payload !== null) {
             if (!payload.isAdmin) {
+                // (request as any).table_number = payload.table_number;
                 request.table_number = payload.table_number;
                 next();
             } else {
